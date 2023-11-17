@@ -19,8 +19,8 @@ namespace ZC.PeriodicTableLearner
         public const int CASE_HEIGHT = 75;
         public const int FONT_SIZE = 24;
 
-        public static List<Element> elements = new List<Element>();
-        public static Element[,] elemeents = new Element[9, 18];
+        public static List<Element> allElements = new List<Element>();
+        public static Element[,] elements = new Element[9, 18];
 
         public MainWindow()
         {
@@ -31,10 +31,10 @@ namespace ZC.PeriodicTableLearner
             foreach (ChemicalGroup chemicalGroup in ChemicalGroup.ChemicalGroups)
             {
                 foreach (Element element in chemicalGroup.Elements)
-                    elements.Add(element);
+                    allElements.Add(element);
             }
 
-            elements = elements.OrderBy(element => element.AtomicNumber).ToList();
+            allElements = allElements.OrderBy(element => element.AtomicNumber).ToList();
 
             int idx = 0;
             for (int i = 0; i < 7; i++)
@@ -45,14 +45,14 @@ namespace ZC.PeriodicTableLearner
                     {
                         for (int k = 0; k < 15; k++)
                         {
-                            elemeents[i + 2, j + k] = elements[idx];
+                            elements[i + 2, j + k] = allElements[idx];
                             idx++;
                         }
                     }
                     else if ((i == j && j == 0) || (i == 0 && j == 17) || (i >= 1 && i <= 2 && j <= 1) || (i >= 1 && i <= 2 && j >= 12) || (i >= 3 && i <= 4) ||
                         (i >= 5 && i <= 6 && j != 2))
                     {
-                        elemeents[i, j] = elements[idx];
+                        elements[i, j] = allElements[idx];
                         idx++;
                     }
                 }
@@ -68,13 +68,13 @@ namespace ZC.PeriodicTableLearner
                         CreateSerie(idx, j, i);
                         idx += 15;
                     }
-                    else if (elemeents[i, j] == default)
+                    else if (elements[i, j] == default)
                     {
                         continue; 
                     }
                     else
                     {
-                        CreateCase(elemeents[i, j], j + (i >= 7 && i <= 8 ? 0.5 : 0), i + (i >= 7 && i <= 8 ? 0.1 : 0));
+                        CreateCase(elements[i, j], j + (i >= 7 && i <= 8 ? 0.5 : 0), i + (i >= 7 && i <= 8 ? 0.1 : 0));
                         idx++;
                     }
                 }
@@ -93,7 +93,7 @@ namespace ZC.PeriodicTableLearner
                 {
                     Width = CASE_WIDTH,
                     Height = CASE_HEIGHT,
-                    Fill = elements[first].ChemicalGroup.GroupColor,
+                    Fill = allElements[first].ChemicalGroup.GroupColor,
                 };
                 Border border = new Border()
                 {
@@ -110,7 +110,7 @@ namespace ZC.PeriodicTableLearner
 
                 Label lblNoAtom = new Label()
                 {
-                    Content = elements[first].AtomicNumber.ToString() + "-" + (elements[first].AtomicNumber + 14).ToString(),
+                    Content = allElements[first].AtomicNumber.ToString() + "-" + (allElements[first].AtomicNumber + 14).ToString(),
                     HorizontalContentAlignment = HorizontalAlignment.Left,
                     VerticalContentAlignment = VerticalAlignment.Top,
                     HorizontalAlignment = HorizontalAlignment.Left,
@@ -134,7 +134,7 @@ namespace ZC.PeriodicTableLearner
 
                 Label lblSerieTitle = new Label()
                 {
-                    Content = elements[first].AtomicNumber == 57 ? "Lanthanide" : "Actinide",
+                    Content = allElements[first].AtomicNumber == 57 ? "Lanthanide" : "Actinide",
                     HorizontalContentAlignment = HorizontalAlignment.Right,
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Left,
@@ -158,10 +158,10 @@ namespace ZC.PeriodicTableLearner
 
             int i = (int)Math.Floor(width);
             int j = (int)Math.Floor(height);
-            if (i - 1 >= 0 && elemeents[j, i - 1] != default && elemeents[j, i - 1].ChemicalGroup.Equals(elemeents[j, i].ChemicalGroup)) rtl = rbl = 1;
-            if (i + 1 <= 17 && elemeents[j, i + 1] != default && elemeents[j, i + 1].ChemicalGroup.Equals(elemeents[j, i].ChemicalGroup)) rtr = rbr = 1;
-            if (j - 1 >= 0 && elemeents[j - 1, i] != default && elemeents[j - 1, i].ChemicalGroup.Equals(elemeents[j, i].ChemicalGroup)) rtl = rtr = 1;
-            if (j + 1 <= 6 && elemeents[j + 1, i] != default && elemeents[j + 1, i].ChemicalGroup.Equals(elemeents[j, i].ChemicalGroup)) rbl = rbr = 1;
+            if (i - 1 >= 0 && elements[j, i - 1] != default && elements[j, i - 1].ChemicalGroup.Equals(elements[j, i].ChemicalGroup)) rtl = rbl = 1;
+            if (i + 1 <= 17 && elements[j, i + 1] != default && elements[j, i + 1].ChemicalGroup.Equals(elements[j, i].ChemicalGroup)) rtr = rbr = 1;
+            if (j - 1 >= 0 && elements[j - 1, i] != default && elements[j - 1, i].ChemicalGroup.Equals(elements[j, i].ChemicalGroup)) rtl = rtr = 1;
+            if (j + 1 <= 6 && elements[j + 1, i] != default && elements[j + 1, i].ChemicalGroup.Equals(elements[j, i].ChemicalGroup)) rbl = rbr = 1;
 
             Rectangle rect = new Rectangle()
             {
