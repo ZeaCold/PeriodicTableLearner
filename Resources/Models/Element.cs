@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZC.PeriodicTableLearner.Resources.Models
+﻿namespace ZC.PeriodicTableLearner.Resources.Models
 {
     public class Element
     {
@@ -16,15 +10,17 @@ namespace ZC.PeriodicTableLearner.Resources.Models
 
         public double AtomicWeight { get; set; }
 
-        public double Electronegativity {  get; set; }
+        public double ElectroNegativity {  get; set; }
 
-        public Element(int atomicNumber, string name, string symbol, double atomicWeight, double electronegativity) 
+        public ChemicalGroup ChemicalGroup => ChemicalGroup.GetChemicalGroupForElement(this);
+
+        public Element(int atomicNumber, string name, string symbol, double atomicWeight, double electroNegativity) 
         {
             AtomicNumber = atomicNumber;
             Name = name;
             Symbol = symbol;
             AtomicWeight = atomicWeight;
-            Electronegativity = electronegativity;
+            ElectroNegativity = electroNegativity;
         }
     }
 }
