@@ -3,8 +3,17 @@ using System.Collections.Generic;
 
 namespace ZC.PeriodicTableLearner.Resources.Extensions
 {
+    /// <summary>
+    /// Int extension class
+    /// </summary>
     public static class IntExtension
     {
+        /// <summary>
+        /// Convert an int32 to a roman number
+        /// </summary>
+        /// <param name="num">The number to convert</param>
+        /// <returns>Returns the roman value of the specified number</returns>
+        /// <exception cref="ArgumentException">Exception returned when the number is lower than 1 or higher than 3999</exception>
         public static string ToRoman(this int num)
         {
             if (num < 1 || num > 3999)

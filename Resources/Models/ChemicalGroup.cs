@@ -4,38 +4,113 @@ using System.Windows.Media;
 
 namespace ZC.PeriodicTableLearner.Resources.Models
 {
+    /// <summary>
+    /// Chemical group model class
+    /// </summary>
     public class ChemicalGroup
     {
+        /// <summary>
+        /// Index of the polyatomic nonmetal group
+        /// </summary>
         public const int IDX_POLYATOMIC_NONMETAL = 0;
+
+        /// <summary>
+        /// Index of the alkaline metal group
+        /// </summary>
         public const int IDX_ALKALIMETAL = 1;
+
+        /// <summary>
+        /// Index of the alkaline earth metal group
+        /// </summary>
         public const int IDX_ALKALINE_EARTH_METAL = 2;
+
+        /// <summary>
+        /// Index of the transition metal group
+        /// </summary>
         public const int IDX_TRANSITIONMETAL = 3;
+
+        /// <summary>
+        /// Index of the post transition metal group
+        /// </summary>
         public const int IDX_POST_TRANSITION_METAL = 4;
+
+        /// <summary>
+        /// Index of the metalloid group
+        /// </summary>
         public const int IDX_METALLOID = 5;
+
+        /// <summary>
+        /// Index of the diatomic nonmetal group
+        /// </summary>
         public const int IDX_DIATOMIC_NONMETAL = 6;
+
+        /// <summary>
+        /// Index of the noble gas group
+        /// </summary>
         public const int IDX_NOBLE_GAS = 7;
+
+        /// <summary>
+        /// Index of the lanthanide group
+        /// </summary>
         public const int IDX_LANTHANIDE = 8;
+
+        /// <summary>
+        /// Index of the actinide group
+        /// </summary>
         public const int IDX_ACTINIDE = 9;
+
+        /// <summary>
+        /// Index of the unknown group
+        /// </summary>
         public const int IDX_UNKNOWN = 10;
 
+        /// <summary>
+        /// Name of the chemical group
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Color of the group
+        /// </summary>
         public SolidColorBrush GroupColor { get; set; }
 
+        /// <summary>
+        /// List of elements of the group
+        /// </summary>
         public List<Element> Elements { get; set; } = new List<Element>();
 
+        /// <summary>
+        /// List of all chemicals groups
+        /// </summary>
         public static List<ChemicalGroup> ChemicalGroups { get; set; } = new List<ChemicalGroup> { };
 
+        /// <summary>
+        /// Main constructor of the ChemicalGroup
+        /// </summary>
+        /// <param name="name">Name of the chemical group</param>
+        /// <param name="color">Color of the chemical group</param>
         public ChemicalGroup(string name, SolidColorBrush color)
         {
             Name = name;
             GroupColor = color;
         }
 
+        /// <summary>
+        /// Add an element to the chemical group
+        /// </summary>
+        /// <param name="element">The element to add to the chemical group</param>
         public void Add(Element element) => Elements.Add(element);
 
+        /// <summary>
+        /// Get the chemical group for a specified element
+        /// </summary>
+        /// <param name="element">The element to search with</param>
+        /// <returns>Returns the chemical group that contain the specified element</returns>
         public static ChemicalGroup GetChemicalGroupForElement(Element element) => ChemicalGroups.FirstOrDefault(chemicalGroup => chemicalGroup.Elements.Contains(element));
 
+        /// <summary>
+        /// Create all elements and chemicals groups
+        /// </summary>
         public static void CreateAll()
         {
             ChemicalGroups.Clear();
@@ -43,6 +118,9 @@ namespace ZC.PeriodicTableLearner.Resources.Models
             CreateElements();
         }
 
+        /// <summary>
+        /// Create the chemical groups
+        /// </summary>
         public static void CreateChemicalGroups()
         {
             ChemicalGroups.Add(new ChemicalGroup("Polyatomic nonmetals", new SolidColorBrush(Color.FromArgb(128, 33, 191, 170))));
@@ -58,6 +136,9 @@ namespace ZC.PeriodicTableLearner.Resources.Models
             ChemicalGroups.Add(new ChemicalGroup("Unknown", new SolidColorBrush(Color.FromArgb(128, 180, 179, 181))));
         }
 
+        /// <summary>
+        /// Create the elements
+        /// </summary>
         public static void CreateElements()
         {
             ChemicalGroups[IDX_DIATOMIC_NONMETAL].Add(new Element(1, "Hydrogen", "H", 1.00784, 2.2));

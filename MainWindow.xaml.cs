@@ -85,6 +85,9 @@ namespace ZC.PeriodicTableLearner
             CreateLegend();
         }
 
+        /// <summary>
+        /// Create the legends of chemical groups
+        /// </summary>
         public void CreateLegend()
         {
             int height = 40;
@@ -134,6 +137,9 @@ namespace ZC.PeriodicTableLearner
             }
         }
 
+        /// <summary>
+        /// Create columns index
+        /// </summary>
         public void CreateColumns()
         {
             int height = 0;
@@ -168,6 +174,12 @@ namespace ZC.PeriodicTableLearner
             }
         }
 
+        /// <summary>
+        /// Create the table case of the series of element
+        /// </summary>
+        /// <param name="first">The first element of the series</param>
+        /// <param name="width">The width in the table</param>
+        /// <param name="height">The height in the table</param>
         public void CreateSerie(int first, double width, double height)
         {
             CreateTableCase();
@@ -238,6 +250,12 @@ namespace ZC.PeriodicTableLearner
             }
         }
 
+        /// <summary>
+        /// Create the case for an element
+        /// </summary>
+        /// <param name="element">The element to create the case for</param>
+        /// <param name="width">The width in the table</param>
+        /// <param name="height">The height in the table</param>
         public void CreateCase(Element element, double width, double height)
         {
             int rtl, rtr, rbl, rbr;
