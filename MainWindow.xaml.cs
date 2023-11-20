@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using ZC.PeriodicTableLearner.Resources.Models;
 using ZC.PeriodicTableLearner.Resources.Extensions;
+using System.Windows.Media.Animation;
 
 namespace ZC.PeriodicTableLearner
 {
@@ -22,11 +23,12 @@ namespace ZC.PeriodicTableLearner
         public static List<Element> allElements = new List<Element>();
         public static Element[,] elements = new Element[9, 18];
 
-        public Color colorCache = Color.FromArgb(95, 255, 255, 255);
+        public Color colorCache = Color.FromArgb(160, 255, 255, 255);
 
         public static MainWindow thisMainWindow = null;
 
         public (ChemicalGroup c, Element e) lastFilter = default;
+        public static bool hasClicked;
 
         public MainWindow()
         {
@@ -97,10 +99,41 @@ namespace ZC.PeriodicTableLearner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void Label_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private static void Label_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Label label = sender as Label;
-            thisMainWindow.ToggleFilter(ChemicalGroup.GetChemicalGroupFromName(label.Content.ToString()));
+            ChemicalGroup chemicalGroup = ChemicalGroup.GetChemicalGroupFromName(label.Content.ToString());
+            if (thisMainWindow.lastFilter.c != default && thisMainWindow.lastFilter.c.Equals(chemicalGroup))
+                hasClicked = !hasClicked;
+
+            thisMainWindow.ToggleFilter(chemicalGroup);
+        }
+
+        /// <summary>
+        /// On mouse enter, apply the cache over the elements that are not in the specified ChemicalGroup
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void Label_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (!hasClicked)
+            {
+                Label label = sender as Label;
+                thisMainWindow.ToggleFilter(ChemicalGroup.GetChemicalGroupFromName(label.Content.ToString()));
+            }
+        }
+
+        /// <summary>
+        /// On mouse leave, remove the cache over the elements that are not in the specified ChemicalGroup
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void Label_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (!hasClicked)
+            {
+                thisMainWindow.ToggleFilter();
+            }
         }
 
         /// <summary>
@@ -112,16 +145,41 @@ namespace ZC.PeriodicTableLearner
         {
             foreach (Rectangle rectangle in mainGrid.Children.OfType<Rectangle>())
             {
-                rectangle.Visibility = Visibility.Hidden;
-                if (lastFilter != default && lastFilter.Equals((chemicalGroup, element))) continue;
+                if (chemicalGroup == default && element == default)
+                {
+                    AnimateVisibility(rectangle, false, rectangle.IsVisible ? 1 : 0);
+                    continue;
+                }
 
                 if (rectangle.Tag == default) continue;
                 (ChemicalGroup c, Element e) tagOfO = ((ChemicalGroup c, Element e))rectangle.Tag;
-                if (tagOfO.c.Equals(chemicalGroup) || tagOfO.e.Equals(element)) continue;
-                else rectangle.Visibility = Visibility.Visible;
+                AnimateVisibility(rectangle, !(tagOfO.c.Equals(chemicalGroup) || tagOfO.e.Equals(element)), rectangle.IsVisible ? 1 : 0);
             }
 
-            lastFilter = !lastFilter.Equals((chemicalGroup, element)) ? (chemicalGroup, element) : default;
+            lastFilter = lastFilter.Equals((chemicalGroup, element)) && !hasClicked ? default : (chemicalGroup, element);
+        }
+
+        /// <summary>
+        /// Animate the visibility toggle
+        /// </summary>
+        /// <param name="element">The element to change visibility</param>
+        /// <param name="isVisible">If the element finishes visible or not</param>
+        /// <param name="currentState">The current state of the element, 1 for visible, 0 otherwise</param>
+        private void AnimateVisibility(UIElement element, bool isVisible, int currentState)
+        {
+            DoubleAnimation animation = new DoubleAnimation
+            {
+                Duration = TimeSpan.FromSeconds(0.1),
+                From = currentState,
+                To = isVisible ? 1 : 0,
+                FillBehavior = FillBehavior.HoldEnd
+            };
+
+            element.BeginAnimation(OpacityProperty, animation);
+
+            if (!isVisible)
+                animation.Completed += (s, e) => element.Visibility = Visibility.Hidden;
+            else element.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -156,7 +214,9 @@ namespace ZC.PeriodicTableLearner
                     Padding = new Thickness(0, 0, 0, 0)
                 };
 
-                lblName.MouseLeftButtonUp += Label_MouseLeftButtonDown;
+                lblName.MouseLeftButtonUp += Label_MouseLeftButtonUp;
+                lblName.MouseEnter += Label_MouseEnter;
+                lblName.MouseLeave += Label_MouseLeave;
 
                 Border border = new Border()
                 {
