@@ -5,8 +5,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Xml.Linq;
 using ZC.PeriodicTableLearner.Resources.Models;
+using ZC.PeriodicTableLearner.Resources.Extensions;
+using System.Windows.Documents;
 
 namespace ZC.PeriodicTableLearner
 {
@@ -79,6 +80,92 @@ namespace ZC.PeriodicTableLearner
                     }
                 }
             }
+
+            CreateColumns();
+            CreateLegend();
+        }
+
+        public void CreateLegend()
+        {
+            int height = 40;
+            int nbrColumn = 8;
+            double width = (mainWindow.Width - 20 - (nbrColumn * 10) - (nbrColumn * 20)) / nbrColumn;
+
+            double marginLeft = 10 + (1 * width);
+            for (int i = 0; i < ChemicalGroup.ChemicalGroups.Count; i++)
+            {
+                if (i == 6) marginLeft = 10 + (1.5 * width);
+
+                int rtl, rtr, rbl, rbr;
+                rtl = rtr = rbl = rbr = 3;
+
+                Label lblName = new Label()
+                {
+                    Content = ChemicalGroup.ChemicalGroups[i].Name,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Width = width,
+                    Height = 30,
+                    FontSize = 12,
+                    FontWeight = FontWeights.Bold,
+                    FontFamily = new FontFamily("Arial"),
+                    Padding = new Thickness(0, 0, 0, 0)
+                };
+
+                Border border = new Border()
+                {
+                    Width = width,
+                    Height = 30,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Margin = new Thickness(marginLeft, 750 + ((i >= 6 ? 1 : 0) * height), 0, 0),
+                    CornerRadius = new CornerRadius(rtl, rtr, rbr, rbl),
+                    Child = lblName,
+                    BorderThickness = new Thickness(1),
+                    BorderBrush = Brushes.Black,
+                    Background = ChemicalGroup.ChemicalGroups[i].GroupColor
+                };
+
+                mainGrid.Children.Add(border);
+
+                marginLeft += width + 10 + 20;
+            }
+        }
+
+        public void CreateColumns()
+        {
+            int height = 0;
+            string letter = "A";
+            int number = 0;
+
+            for (int i = 0; i < 18; i++)
+            {
+                letter = i >= 2 && i <= 11 ? "B" : "A";
+                height = i >= 1 && i < 17 ? (i >= 2 && i <= 11 ? 3 : 1) : 0;
+                number++;
+                if (i == 10) number = 1;
+                if (i >= 7 && i <= 9) number = 8;
+
+                Label lblColumnTitle = new Label()
+                {
+                    Content = number.ToRoman() + letter,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Margin = new Thickness(10 + i * CASE_WIDTH + i * 2, 10 + height * CASE_HEIGHT + height * 2, 0, 0),
+                    Width = CASE_WIDTH,
+                    Height = 24,
+                    FontSize = FONT_SIZE * 2 / 3,
+                    FontWeight = FontWeights.Bold,
+                    FontFamily = new FontFamily("Arial"),
+                    Padding = new Thickness(2, 1, 0, 0)
+                };
+
+                mainGrid.Children.Add(lblColumnTitle);
+            }
         }
 
         public void CreateSerie(int first, double width, double height)
@@ -101,7 +188,7 @@ namespace ZC.PeriodicTableLearner
                     Height = CASE_HEIGHT,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Top,
-                    Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 10 + height * CASE_HEIGHT + height * 2, 0, 0),
+                    Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 32 + height * CASE_HEIGHT + height * 2, 0, 0),
                     CornerRadius = new CornerRadius(rtl, rtr, rbr, rbl),
                     Child = rect,
                     BorderThickness = new Thickness(1),
@@ -115,7 +202,7 @@ namespace ZC.PeriodicTableLearner
                     VerticalContentAlignment = VerticalAlignment.Top,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Top,
-                    Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 10 + height * CASE_HEIGHT + height * 2, 0, 0),
+                    Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 32 + height * CASE_HEIGHT + height * 2, 0, 0),
                     Width = CASE_WIDTH,
                     Height = CASE_HEIGHT / 3,
                     FontSize = FONT_SIZE * 1 / 2,
@@ -139,7 +226,7 @@ namespace ZC.PeriodicTableLearner
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Top,
-                    Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 10 + height * CASE_HEIGHT + height * 2, 0, 0),
+                    Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 32 + height * CASE_HEIGHT + height * 2, 0, 0),
                     Width = CASE_WIDTH + 5,
                     Height = CASE_HEIGHT,
                     FontSize = FONT_SIZE * 1 / 2,
@@ -175,7 +262,7 @@ namespace ZC.PeriodicTableLearner
                 Height = CASE_HEIGHT,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 10 + height * CASE_HEIGHT + height * 2, 0, 0),
+                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 32 + height * CASE_HEIGHT + height * 2, 0, 0),
                 CornerRadius = new CornerRadius(rtl, rtr, rbr, rbl),
                 Child = rect,
                 BorderThickness = new Thickness(1),
@@ -189,7 +276,7 @@ namespace ZC.PeriodicTableLearner
                 VerticalContentAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 7 + height * CASE_HEIGHT + height * 2, 0, 0),
+                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 29 + height * CASE_HEIGHT + height * 2, 0, 0),
                 Width = CASE_WIDTH,
                 Height = CASE_HEIGHT,
                 FontSize = FONT_SIZE,
@@ -204,7 +291,7 @@ namespace ZC.PeriodicTableLearner
                 VerticalContentAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, (CASE_HEIGHT * 2 / 3) + height * CASE_HEIGHT + height * 2, 0, 0),
+                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 74 + height * CASE_HEIGHT + height * 2, 0, 0),
                 Width = CASE_WIDTH,
                 Height = CASE_HEIGHT / 3,
                 FontSize = FONT_SIZE * 1 / 2,
@@ -219,7 +306,7 @@ namespace ZC.PeriodicTableLearner
                 VerticalContentAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, (CASE_HEIGHT * 5 / 6) + height * CASE_HEIGHT + height * 2, 0, 0),
+                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 86 + height * CASE_HEIGHT + height * 2, 0, 0),
                 Width = CASE_WIDTH,
                 Height = CASE_HEIGHT / 3,
                 FontSize = (FONT_SIZE * 1 / 2) - 2,
@@ -234,7 +321,7 @@ namespace ZC.PeriodicTableLearner
                 VerticalContentAlignment = VerticalAlignment.Top,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 10 + height * CASE_HEIGHT + height * 2, 0, 0),
+                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 32 + height * CASE_HEIGHT + height * 2, 0, 0),
                 Width = CASE_WIDTH,
                 Height = CASE_HEIGHT / 3,
                 FontSize = (FONT_SIZE * 1 / 2) + 4,
@@ -249,7 +336,7 @@ namespace ZC.PeriodicTableLearner
                 VerticalContentAlignment = VerticalAlignment.Top,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 10 + height * CASE_HEIGHT + height * 2, 0, 0),
+                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 32 + height * CASE_HEIGHT + height * 2, 0, 0),
                 Width = CASE_WIDTH,
                 Height = CASE_HEIGHT / 3,
                 FontSize = FONT_SIZE * 1 / 2,

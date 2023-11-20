@@ -5,6 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ZC.PeriodicTableLearner"
         mc:Ignorable="d"
-        Title="MainWindow" Height="770" Width="1420" ResizeMode="NoResize">
+        Title="MainWindow" Height="900" Width="1420" ResizeMode="CanMinimize">
     <Grid x:Name="mainGrid"/>
 </Window>
