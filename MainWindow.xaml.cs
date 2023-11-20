@@ -7,7 +7,6 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using ZC.PeriodicTableLearner.Resources.Models;
 using ZC.PeriodicTableLearner.Resources.Extensions;
-using System.Windows.Documents;
 
 namespace ZC.PeriodicTableLearner
 {
@@ -22,6 +21,12 @@ namespace ZC.PeriodicTableLearner
 
         public static List<Element> allElements = new List<Element>();
         public static Element[,] elements = new Element[9, 18];
+
+        public Color colorCache = Color.FromArgb(95, 255, 255, 255);
+
+        public static MainWindow thisMainWindow = null;
+
+        public (ChemicalGroup c, Element e) lastFilter = default;
 
         public MainWindow()
         {
@@ -83,6 +88,40 @@ namespace ZC.PeriodicTableLearner
 
             CreateColumns();
             CreateLegend();
+
+            thisMainWindow = this;
+        }
+
+        /// <summary>
+        /// On left click, apply the cache over the elements that are not in the specified ChemicalGroup
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void Label_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Label label = sender as Label;
+            thisMainWindow.ToggleFilter(ChemicalGroup.GetChemicalGroupFromName(label.Content.ToString()));
+        }
+
+        /// <summary>
+        /// Toggle the visibility of the cache
+        /// </summary>
+        /// <param name="chemicalGroup">The chemical group to filter</param>
+        /// <param name="element">The element to filter</param>
+        public void ToggleFilter(ChemicalGroup chemicalGroup = default, Element element = default)
+        {
+            foreach (Rectangle rectangle in mainGrid.Children.OfType<Rectangle>())
+            {
+                rectangle.Visibility = Visibility.Hidden;
+                if (lastFilter != default && lastFilter.Equals((chemicalGroup, element))) continue;
+
+                if (rectangle.Tag == default) continue;
+                (ChemicalGroup c, Element e) tagOfO = ((ChemicalGroup c, Element e))rectangle.Tag;
+                if (tagOfO.c.Equals(chemicalGroup) || tagOfO.e.Equals(element)) continue;
+                else rectangle.Visibility = Visibility.Visible;
+            }
+
+            lastFilter = !lastFilter.Equals((chemicalGroup, element)) ? (chemicalGroup, element) : default;
         }
 
         /// <summary>
@@ -117,6 +156,8 @@ namespace ZC.PeriodicTableLearner
                     Padding = new Thickness(0, 0, 0, 0)
                 };
 
+                lblName.MouseLeftButtonUp += Label_MouseLeftButtonDown;
+
                 Border border = new Border()
                 {
                     Width = width,
@@ -142,8 +183,8 @@ namespace ZC.PeriodicTableLearner
         /// </summary>
         public void CreateColumns()
         {
-            int height = 0;
-            string letter = "A";
+            int height;
+            string letter;
             int number = 0;
 
             for (int i = 0; i < 18; i++)
@@ -207,6 +248,18 @@ namespace ZC.PeriodicTableLearner
                     BorderBrush = Brushes.Black
                 };
 
+                Rectangle cache = new Rectangle()
+                {
+                    Tag = (allElements[first].ChemicalGroup, allElements[first]),
+                    Visibility = Visibility.Hidden,
+                    Width = CASE_WIDTH,
+                    Height = CASE_HEIGHT,
+                    Fill = new SolidColorBrush(colorCache),
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 32 + height * CASE_HEIGHT + height * 2, 0, 0),
+                };
+
                 Label lblNoAtom = new Label()
                 {
                     Content = allElements[first].AtomicNumber.ToString() + "-" + (allElements[first].AtomicNumber + 14).ToString(),
@@ -224,6 +277,7 @@ namespace ZC.PeriodicTableLearner
 
                 _ = mainGrid.Children.Add(border);
                 _ = mainGrid.Children.Add(lblNoAtom);
+                _ = mainGrid.Children.Add(cache);
             }
 
             void CreateSerieTitle()
@@ -270,6 +324,7 @@ namespace ZC.PeriodicTableLearner
 
             Rectangle rect = new Rectangle()
             {
+                Tag = (element.ChemicalGroup, element),
                 Width = CASE_WIDTH,
                 Height = CASE_HEIGHT,
                 Fill = element.ChemicalGroup.GroupColor,
@@ -285,6 +340,18 @@ namespace ZC.PeriodicTableLearner
                 Child = rect,
                 BorderThickness = new Thickness(1),
                 BorderBrush = Brushes.Black
+            };
+
+            Rectangle cache = new Rectangle()
+            {
+                Tag = (element.ChemicalGroup, element),
+                Visibility = Visibility.Hidden,
+                Width = CASE_WIDTH,
+                Height = CASE_HEIGHT,
+                Fill = new SolidColorBrush(colorCache),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(10 + width * CASE_WIDTH + width * 2, 32 + height * CASE_HEIGHT + height * 2, 0, 0),
             };
 
             Label lblSymbol = new Label()
@@ -368,6 +435,7 @@ namespace ZC.PeriodicTableLearner
             _ = mainGrid.Children.Add(lblElecNeg);
             _ = mainGrid.Children.Add(lblName);
             _ = mainGrid.Children.Add(lblAtomicWeight);
+            _ = mainGrid.Children.Add(cache);
         }    
     }
 }

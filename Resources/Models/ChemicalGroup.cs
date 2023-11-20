@@ -109,6 +109,13 @@ namespace ZC.PeriodicTableLearner.Resources.Models
         public static ChemicalGroup GetChemicalGroupForElement(Element element) => ChemicalGroups.FirstOrDefault(chemicalGroup => chemicalGroup.Elements.Contains(element));
 
         /// <summary>
+        /// Get the chemical group with the specified name
+        /// </summary>
+        /// <param name="name">The name of the chemical group</param>
+        /// <returns>Returns the chemical group that corresponds to the specified name</returns>
+        public static ChemicalGroup GetChemicalGroupFromName(string name) => ChemicalGroups.FirstOrDefault(chemicalGroup => chemicalGroup.Name.Equals(name));
+
+        /// <summary>
         /// Create all elements and chemicals groups
         /// </summary>
         public static void CreateAll()
