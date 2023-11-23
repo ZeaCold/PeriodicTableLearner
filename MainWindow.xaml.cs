@@ -169,7 +169,7 @@ namespace ZC.PeriodicTableLearner
         {
             DoubleAnimation animation = new DoubleAnimation
             {
-                Duration = TimeSpan.FromSeconds(0.1),
+                Duration = TimeSpan.FromSeconds(0.2),
                 From = currentState,
                 To = isVisible ? 1 : 0,
                 FillBehavior = FillBehavior.HoldEnd
